@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 // Load env vars
 require('dotenv').config();
@@ -16,10 +17,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/expenses', require('./routes/expenseRoutes'));
+const userRoutes = require('./routes/authRoutes');
+app.use('/User', userRoutes);
+app.use('/expenses', require('./routes/expenseRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

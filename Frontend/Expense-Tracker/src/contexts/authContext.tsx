@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import axios from 'axios';
 
 interface User {
   id: string;
@@ -9,8 +10,8 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (username: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     
     // Simulate API call delay
@@ -45,46 +46,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userWithoutPassword);
       localStorage.setItem('expenseGuardUser', JSON.stringify(userWithoutPassword));
       setIsLoading(false);
-      return true;
+      return { success: true };
     }
     
     setIsLoading(false);
-    return false;
+    return { success: false, error: 'Invalid credentials' };
   };
 
-  const signup = async (username: string, email: string, password: string): Promise<boolean> => {
+  const signup = async (username: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Check if user already exists
-    const users = JSON.parse(localStorage.getItem('expenseGuardUsers') || '[]');
-    const existingUser = users.find((u: any) => u.email === email);
-    
-    if (existingUser) {
+
+    try {
+      console.log({  username, email, password });
+      const response = await axios.post('http://localhost:8765/User/register', {
+        username, // changed from name to username
+        email,
+        password
+      });
+      
+      // If successful, create user object and store token
+      const user = { id: '', username, email };
+      setUser(user);
+      localStorage.setItem('expenseGuardUser', JSON.stringify(user));
+      localStorage.setItem('expenseGuardToken', response.data.token);
       setIsLoading(false);
-      return false;
+      return { success: true };
+    } catch (error: any) {
+      setIsLoading(false);
+      console.error('Signup error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        url: error.config?.url
+      });
+      
+      let errorMessage = 'Registration failed';
+      if (error.response?.data?.msg) {
+        errorMessage = error.response.data.msg;
+      } else if (error.code === 'ERR_NETWORK') {
+        errorMessage = 'Cannot connect to server. Please check if the backend is running.';
+      } else if (error.response?.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      
+      return { success: false, error: errorMessage };
     }
-    
-    // Create new user
-    const newUser = {
-      id: Date.now().toString(),
-      username,
-      email,
-      password // In real app, this would be hashed
-    };
-    
-    users.push(newUser);
-    localStorage.setItem('expenseGuardUsers', JSON.stringify(users));
-    
-    // Auto login after signup
-    const userWithoutPassword = { id: newUser.id, username: newUser.username, email: newUser.email };
-    setUser(userWithoutPassword);
-    localStorage.setItem('expenseGuardUser', JSON.stringify(userWithoutPassword));
-    
-    setIsLoading(false);
-    return true;
   };
 
   const logout = () => {

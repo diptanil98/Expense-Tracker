@@ -35,11 +35,11 @@ export function SignupPage() {
       return;
     }
 
-    const success = await signup(formData.username, formData.email, formData.password);
-    if (success) {
+    const result = await signup(formData.username, formData.email, formData.password);
+    if (result.success) {
       navigate('/');
     } else {
-      setError('Email already exists. Please use a different email.');
+      setError(result.error || 'Registration failed. Please try again.');
     }
   };
 
