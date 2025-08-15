@@ -34,23 +34,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Check if user exists in localStorage (simple demo authentication)
-    const users = JSON.parse(localStorage.getItem('expenseGuardUsers') || '[]');
-    const foundUser = users.find((u: any) => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      const userWithoutPassword = { id: foundUser.id, username: foundUser.username, email: foundUser.email };
-      setUser(userWithoutPassword);
-      localStorage.setItem('expenseGuardUser', JSON.stringify(userWithoutPassword));
+    try {
+      const response = await axios.post('http://localhost:8765/User/login', {
+        email,
+        password
+      });
+      
+      // Extract user data from response
+      const userData = response.data.data.user;
+      const user = { 
+        id: userData._id, // Use the _id from backend response
+        username: userData.username, 
+        email: userData.email 
+      };
+      
+      setUser(user);
+      localStorage.setItem('expenseGuardUser', JSON.stringify(user));
+      localStorage.setItem('expenseGuardToken', response.data.token);
       setIsLoading(false);
       return { success: true };
+    } catch (error: any) {
+      setIsLoading(false);
+      console.error('Login error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        url: error.config?.url
+      });
+      
+      let errorMessage = 'Login failed';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.code === 'ERR_NETWORK') {
+        errorMessage = 'Cannot connect to server. Please check if the backend is running.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'Invalid email or password';
+      } else if (error.response?.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      
+      return { success: false, error: errorMessage };
     }
-    
-    setIsLoading(false);
-    return { success: false, error: 'Invalid credentials' };
   };
 
   const signup = async (username: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
@@ -64,8 +89,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password
       });
       
-      // If successful, create user object and store token
-      const user = { id: '', username, email };
+      // Extract user data from response
+      const userData = response.data.data.user;
+      const user = { 
+        id: userData._id, // Use the _id from backend response
+        username: userData.username, 
+        email: userData.email 
+      };
+      
       setUser(user);
       localStorage.setItem('expenseGuardUser', JSON.stringify(user));
       localStorage.setItem('expenseGuardToken', response.data.token);

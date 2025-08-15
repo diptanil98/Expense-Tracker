@@ -7,7 +7,7 @@ interface Expense {
   merchant: string;
   category: string;
   date: string;
-  flagged?: boolean;
+  isFraud?: boolean;
 }
 
 interface ExpensesListProps {
@@ -35,7 +35,7 @@ export function ExpensesList({ expenses }: ExpensesListProps) {
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
                   <h4 className="font-medium text-white">{expense.merchant}</h4>
-                  {expense.flagged && (
+                  {expense.isFraud && (
                     <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs">
                       Flagged
                     </span>

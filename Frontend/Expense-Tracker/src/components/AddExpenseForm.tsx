@@ -12,7 +12,7 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
     merchant: '',
     location: '',
     description: '',
-    paymentMethod: 'credit-card'
+    paymentMethod: 'Credit Card'
   });
 
   const categories = [
@@ -27,10 +27,12 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
   ];
 
   const paymentMethods = [
-    { value: 'credit-card', label: 'Credit/Debit Card' },
-    { value: 'cash', label: 'Cash' },
-    { value: 'bank-transfer', label: 'Bank Transfer' },
-    { value: 'digital-wallet', label: 'Digital Wallet' }
+    { value: 'Credit Card', label: 'Credit Card' },
+    { value: 'Debit Card', label: 'Debit Card' },
+    { value: 'Cash', label: 'Cash' },
+    { value: 'Bank Transfer', label: 'Bank Transfer' },
+    { value: 'Digital Wallet', label: 'Digital Wallet' },
+    { value: 'Other', label: 'Other' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,9 +40,7 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
     if (formData.amount && formData.category && formData.merchant) {
       onAddExpense({
         ...formData,
-        amount: parseFloat(formData.amount),
-        date: new Date().toLocaleDateString(),
-        id: Date.now().toString()
+        amount: parseFloat(formData.amount)
       });
       setFormData({
         amount: '',
@@ -48,7 +48,7 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
         merchant: '',
         location: '',
         description: '',
-        paymentMethod: 'credit-card'
+        paymentMethod: 'Credit Card'
       });
     }
   };

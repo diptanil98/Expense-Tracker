@@ -1,7 +1,10 @@
 import React,  { createContext, useContext, useState}  from 'react';
 import type { ReactNode } from 'react';
+import axios from 'axios';
+
 interface Expense {
   id: string;
+  user: string;
   amount: number;
   merchant: string;
   category: string;
@@ -9,7 +12,7 @@ interface Expense {
   location?: string;
   description?: string;
   paymentMethod: string;
-  flagged?: boolean;
+  isFraud?: boolean;
 }
 
 interface ExpensesContextType {
@@ -25,17 +28,31 @@ const ExpensesContext = createContext<ExpensesContextType | undefined>(undefined
 export function ExpensesProvider({ children }: { children: ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  const addExpense = (expenseData: Omit<Expense, 'id' | 'date'>) => {
-    const newExpense: Expense = {
+  const addExpense = async (expenseData: Omit<Expense, 'id' | 'date'>) => {
+   try{
+    // Get user ID from localStorage
+    const savedUser = localStorage.getItem('expenseGuardUser');
+    if (!savedUser) {
+      throw new Error('User not authenticated');
+    }
+    
+    const user = JSON.parse(savedUser);
+    const expenseWithUser = {
       ...expenseData,
-      id: Date.now().toString(),
-      date: new Date().toLocaleDateString(),
+      user: user.id
     };
-    setExpenses(prev => [newExpense, ...prev]);
-  };
+    
+    const res= await axios.post<Expense>('http://localhost:8765/expenses/expenses',expenseWithUser);
+    const savedExpense=res.data;
+    setExpenses(prev => [savedExpense, ...prev]);
+   }catch (error) { 
+    console.error('Error adding expense:', error);
+    throw error; // Re-throw to handle in the component
+  }
+}
 
   const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-  const flaggedTransactions = expenses.filter(expense => expense.flagged).length;
+  const flaggedTransactions = expenses.filter(expense => expense.isFraud).length;
   const avgTransaction = expenses.length > 0 ? totalSpent / expenses.length : 0;
 
   return (

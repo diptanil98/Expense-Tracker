@@ -1,27 +1,73 @@
-const express = require('express');
+const express= require('express');
 const router = express.Router();
-const {check}= require('express-validator');
-const auth = require('../middleware/auth');
+const Expense = require('../models/expense');
 
-const{
-    getExpense,
-    addExpense,
-    updateExpense,
-    deleteExpense
-} = require('../controllers/expenseControllers');
+router.post('/expenses',async(req, res) => {
+    try{
+        // Check if user is provided (required field)
+        if (!req.body.user) {
+            return res.status(400).send({ error: 'User ID is required' });
+        }
+        
+        const expense=new Expense(req.body);
+        await expense.save();
+        res.status(201).send(expense);
+    }catch(err){
+        console.error('Error creating expense:', err);
+        res.status(400).send({ error: err.message });
+    }
+})
 
-router.get('/',auth,getExpense);
-router.post('/',auth,[
-    check('amount','Amount is required').not().isEmpty(),
-    check('merchant','Merchant is required').not().isEmpty(),
-    check('location','Location is required').not().isEmpty(),
-    check('category','Category is required').not().isEmpty(),
-    check('paymentMethod','Payment method is required').not().isEmpty(),
-    check('description','Description is required').not().isEmpty()
-],addExpense);
+router.get('/expenses', async (req, res) => {
+    try{
+        const expenses= await Expense.find();
+        res.status(200).send(expenses);
+    }catch(err){
+        console.error('Error fetching expenses:', err);
+        res.status(500).send({ error: err.message });
+    }
+})
 
-router.put('/:id',auth,updateExpense);
+router.get('/expenses/:id', async (req, res) => {
+    try{
+        const expense= await Expense.findById(req.params.id);
+        if(!expense){
+            return res.status(404).send({ error: 'Expense not found' });
+        }
+        res.status(200).send(expense);
+    }catch(err){
+        console.error('Error fetching expense:', err);
+        res.status(500).send({ error: err.message });
+    }
+})
 
-router.delete('/:id',auth,deleteExpense);
+router.put('/expenses/:id',async(req,res)=>{
+    try{
+        const expense=await Expense.findByIdAndUpdate(req.params.id,req.body,{
+            new:true,
+            runValidators:true,
+            overwrite:true
+        });
+        if(!expense){
+            return res.status(404).send({ error: 'Expense not found' });
+        }
+        res.status(200).send(expense);
+    }catch(err){
+        console.error('Error updating expense:', err);
+        res.status(500).send({ error: err.message });
+    }
+});
 
+router.delete('/expenses/:id', async (req, res) => {
+    try{
+        const expense = await Expense.findByIdAndDelete(req.params.id);
+        if (!expense) {
+            return res.status(404).send({ error: 'Expense not found' });
+        }
+        res.status(200).send(expense);
+    }catch(err){
+        console.error('Error deleting expense:', err);
+        res.status(500).send({ error: err.message });
+    }
+});
 module.exports = router;

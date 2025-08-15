@@ -55,5 +55,9 @@ const ExpenseSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+ExpenseSchema.pre('save', function(next) {
+  this.date = Date.now();
+  next();
+}, { collection: 'expenses' });
 
-module.exports = mongoose.model('Expense', ExpenseSchema);
+module.exports = mongoose.model('Expense', ExpenseSchema, 'expenses');
