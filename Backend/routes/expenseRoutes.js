@@ -28,6 +28,16 @@ router.get('/expenses', async (req, res) => {
     }
 })
 
+router.get('/expenses/user/:userId', async (req, res) => {
+    try{
+        const expenses = await Expense.find({ user: req.params.userId });
+        res.status(200).send(expenses);
+    }catch(err){
+        console.error('Error fetching user expenses:', err);
+        res.status(500).send({ error: err.message });
+    }
+})
+
 router.get('/expenses/:id', async (req, res) => {
     try{
         const expense= await Expense.findById(req.params.id);

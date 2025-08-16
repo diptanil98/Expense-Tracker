@@ -3,7 +3,7 @@ import { Analytics } from '../components/Analytics';
 import { useExpenses } from '../hooks/useExpenses';
 
 export function AnalyticsPage() {
-  const { expenses } = useExpenses();
+  const { expenses, isLoading } = useExpenses();
 
-  return <Analytics expenses={expenses} />;
+  return <Analytics expenses={expenses} isLoading={isLoading} />;
 }

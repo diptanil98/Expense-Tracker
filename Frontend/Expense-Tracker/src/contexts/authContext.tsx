@@ -51,6 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(user);
       localStorage.setItem('expenseGuardUser', JSON.stringify(user));
       localStorage.setItem('expenseGuardToken', response.data.token);
+      
+      // Dispatch user change event to clear previous user's expenses
+      window.dispatchEvent(new CustomEvent('userChange'));
+      
       setIsLoading(false);
       return { success: true };
     } catch (error: any) {
@@ -100,6 +104,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(user);
       localStorage.setItem('expenseGuardUser', JSON.stringify(user));
       localStorage.setItem('expenseGuardToken', response.data.token);
+      
+      // Dispatch user change event to clear previous user's expenses
+      window.dispatchEvent(new CustomEvent('userChange'));
+      
       setIsLoading(false);
       return { success: true };
     } catch (error: any) {
@@ -128,6 +136,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('expenseGuardUser');
+    localStorage.removeItem('expenseGuardToken');
+    
+    // Dispatch logout event to immediately clear expenses
+    window.dispatchEvent(new CustomEvent('userLogout'));
   };
 
   return (

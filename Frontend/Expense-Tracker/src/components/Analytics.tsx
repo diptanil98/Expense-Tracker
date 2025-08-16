@@ -3,9 +3,25 @@ import { BarChart3, TrendingUp, PieChart } from 'lucide-react';
 
 interface AnalyticsProps {
   expenses: any[];
+  isLoading?: boolean;
 }
 
-export function Analytics({ expenses }: AnalyticsProps) {
+export function Analytics({ expenses, isLoading = false }: AnalyticsProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 backdrop-blur-sm">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400 mx-auto mb-3"></div>
+              <p className="text-slate-400 text-sm">Loading analytics...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const avgTransaction = expenses.length > 0 ? totalSpent / expenses.length : 0;
 
