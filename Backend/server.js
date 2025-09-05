@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 const userRoutes = require('./routes/authRoutes');
 app.use('/User', userRoutes);
 app.use('/expenses', require('./routes/expenseRoutes'));
-
+app.use('/budget',require('./routes/budgetRoutes'))
 // Basic route for testing
 app.get('/', (req, res) => {
   res.send('Expense Tracker API Running');

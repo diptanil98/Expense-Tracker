@@ -10,6 +10,7 @@ import { AddExpensePage } from './pages/AddExpensePage';
 import { AIInsightsPage } from './pages/AIInsightPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { ExpensesProvider } from './hooks/useExpenses';
+import Budgets from './pages/Budget';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route index element={<ExpensesPage />} />
               <Route path="add-expense" element={<AddExpensePage />} />
+               <Route path="/budget" element={<Budgets />} />
               <Route path="ai-insights" element={<AIInsightsPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
             </Route>

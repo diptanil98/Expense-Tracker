@@ -5,6 +5,7 @@ export function Navigation() {
   const tabs = [
     { path: '/', label: 'Expenses' },
     { path: '/add-expense', label: 'Add Expense' },
+    {path:'/budget',label:'Budget'},
     { path: '/ai-insights', label: 'AI Insights' },
     { path: '/analytics', label: 'Analytics' },
   ];
