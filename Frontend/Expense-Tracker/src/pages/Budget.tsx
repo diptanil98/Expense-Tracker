@@ -126,7 +126,7 @@ const Budgets = () => {
 
       const savedBudget = res.data;
 
-      setBudgets([...budgets, {
+      setBudgets((prev) => [...prev, {
         ...savedBudget,
         spent: 0,
         percentage: 0,
@@ -136,6 +136,14 @@ const Budgets = () => {
 
       setNewBudget({ category: '', amount: '', period: 'monthly' });
       setShowAddBudget(false);
+
+      // Fire-and-forget webhook; do not block UI update if it fails
+      axios.post("/webhook/d04dd7a0-fa20-467d-8247-40f7540ee217", {
+        userId: userId,
+        category: newBudget.category,
+        limit: limit,
+        type: "budgetCreated"
+      }).catch(() => {/* ignore webhook errors */});
     } catch (err: any) {
       console.error('Error creating budget:', err);
       if (err.response) {
