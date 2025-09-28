@@ -1,5 +1,6 @@
 import React, { useState ,useRef, useEffect} from 'react';
-import { Plus, Mic, Camera,Square } from 'lucide-react';
+import { Plus, Mic, FileUp,Square } from 'lucide-react';
+import { v4 as uuidv4 } from "uuid";
 
 interface AddExpenseFormProps {
   onAddExpense: (expense: any) => void;
@@ -21,9 +22,13 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
     paymentMethod: 'Credit Card'
   });
 
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+
   const [isListening,setIsListening]= useState(false)
   const [detectedField,setDetectedField]=useState<string | null>(null);
   const recognitionRef=useRef<any>(null);
+  const formId = uuidv4(); // unique ID per submission
 
   const categories = [
     'Food & Dining',
@@ -183,6 +188,64 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
     return updates;
   };
 
+  const handleReceiptChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) {
+    setReceiptFile(null);
+    setReceiptPreview(null);
+    return;
+  }
+
+  setReceiptFile(file);
+
+  // Preview if image
+  if (file.type.startsWith("image/")) {
+    const url = URL.createObjectURL(file);
+    setReceiptPreview(url);
+  } else {
+    setReceiptPreview(null);
+  }
+
+  // ✅ Now file is guaranteed (not null)
+ const formData = new FormData();
+  formData.append("file", file, file.name);
+  formData.append("id", formId); 
+
+  try {
+    // Step 1: Upload to Form Trigger (OCR workflow will save data to Google Sheets)
+    await fetch("/webhook/3e002fac-1264-4bcb-98bc-976c5fff5412", {
+      method: "POST",
+      body: formData,
+    });
+
+    // Step 2: Poll retrieval webhook until OCR data is ready
+    let data = null;
+    for (let i = 0; i < 5; i++) { // try up to 5 times
+      const res = await fetch(`/webhook/ocr-result?id=${formId}`);
+      if (res.ok) {
+        data = await res.json();
+        if (data.amount || data.merchant || data.category) break; // found useful data
+      }
+      await new Promise(r => setTimeout(r, 2000)); // wait 2s before retry
+    }
+
+    if (data) {
+      setFormData({
+        amount: data.amount || "",
+        category: data.category || "",
+        merchant: data.merchant || "",
+        location: data.location || "",
+        description: data.description || "",
+        paymentMethod: data.paymentMethod || "Credit Card",
+      });
+      console.log("Form auto-filled:", data);
+    } else {
+      console.warn("No OCR data found for ID:", formId);
+    }
+  } catch (err) {
+    console.error("Error uploading receipt:", err);
+  }
+};
   // Function to detect which field the speech should go to (kept for backward compatibility)
   const detectField = (transcript: string): { field: string; value: string } | null => {
     const lowerTranscript = transcript.toLowerCase().trim();
@@ -408,7 +471,8 @@ const stopListening=()=>{
     if (formData.amount && formData.category && formData.merchant) {
       onAddExpense({
         ...formData,
-        amount: parseFloat(formData.amount)
+        amount: parseFloat(formData.amount),
+        receipt: receiptFile || undefined
       });
       setFormData({
         amount: '',
@@ -418,6 +482,11 @@ const stopListening=()=>{
         description: '',
         paymentMethod: 'Credit Card'
       });
+      if (receiptPreview) {
+        URL.revokeObjectURL(receiptPreview);
+      }
+      setReceiptFile(null);
+      setReceiptPreview(null);
     }
   };
 
@@ -560,12 +629,21 @@ const stopListening=()=>{
             )}
           </button>
 
-          <button
-            type="button"
-            className="p-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors duration-200"
+          <label
+            htmlFor="receipt-upload"
+            className="p-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors duration-200 cursor-pointer flex items-center"
+            title="Upload receipt (image or PDF)"
           >
-            <Camera className="w-5 h-5" />
-          </button>
+            <FileUp className="w-5 h-5" />
+            <span className="ml-2 hidden sm:inline">Add Receipt</span>
+          </label>
+          <input
+            id="receipt-upload"
+            type="file"
+            accept="image/*,application/pdf"
+            onChange={handleReceiptChange}
+            className="hidden"
+          />
         </div>
 
         {/* Voice Input Status */}
@@ -589,6 +667,20 @@ const stopListening=()=>{
             <p className="text-blue-400 text-sm">
               ✅ Detected: <span className="font-semibold">{detectedField}</span> field
             </p>
+          </div>
+        )}
+
+        {/* Receipt preview / filename */}
+        {receiptFile && (
+          <div className="mt-4 p-3 bg-slate-700/30 border border-slate-600/50 rounded-lg">
+            {receiptPreview ? (
+              <div>
+                <p className="text-slate-300 text-sm mb-2">Receipt preview:</p>
+                <img src={receiptPreview} alt="Receipt preview" className="max-h-48 rounded border border-slate-600/50" />
+              </div>
+            ) : (
+              <p className="text-slate-300 text-sm">Selected file: <span className="text-white font-medium">{receiptFile.name}</span></p>
+            )}
           </div>
         )}
       </form>

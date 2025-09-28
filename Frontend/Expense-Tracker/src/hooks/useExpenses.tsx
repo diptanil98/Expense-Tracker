@@ -125,6 +125,11 @@ const validateCurrentUserExpenses = () => {
     }
     
     setExpenses(prev => [savedExpense, ...prev]);
+    await axios.post("http://localhost:5678/webhook/expense-added",{
+      userId:user.id,
+      category:savedExpense.category,
+      amount:savedExpense.amount
+    });
    }catch (error: any) { 
     console.error('Error adding expense:', error);
     if (error.response?.status === 401) {
