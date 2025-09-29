@@ -17,9 +17,8 @@ export function AIInsights() {
     setError(null);
 
     try {
-      // Replace this URL with your actual AI service endpoint
       const response = await axios.post('http://localhost:5678/webhook/8ea9acbb-c1f5-4b58-ba22-1e2e0da46f3b/chat', {
-  chatInput: question.trim(),   // 👈 changed from "question"
+  chatInput: question.trim(),  
   sessionId: `${user?.id || "guest"}`, 
   timestamp: new Date().toISOString()
 }, {
@@ -52,7 +51,7 @@ const newConversation = {
       console.error('Error calling AI service:', err);
       setError('Failed to get AI insights. Please try again.');
 
-      // Fallback demo response in case of error
+      
       const newConversation = {
         id: Date.now().toString(),
         question: question,

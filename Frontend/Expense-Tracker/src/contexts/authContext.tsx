@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import axios from 'axios';
 
@@ -23,7 +23,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already logged in (from localStorage)
     const savedUser = localStorage.getItem('expenseGuardUser');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -43,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Extract user data from response
       const userData = response.data.data.user;
       const user = { 
-        id: userData._id, // Use the _id from backend response
+        id: userData._id, 
         username: userData.username, 
         email: userData.email 
       };
@@ -52,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('expenseGuardUser', JSON.stringify(user));
       localStorage.setItem('expenseGuardToken', response.data.token);
       
-      // Dispatch user change event to clear previous user's expenses
+      
       window.dispatchEvent(new CustomEvent('userChange'));
       
       setIsLoading(false);
@@ -88,15 +87,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log({  username, email, password });
       const response = await axios.post('http://localhost:8765/User/register', {
-        username, // changed from name to username
+        username, 
         email,
         password
       });
       
-      // Extract user data from response
+      
       const userData = response.data.data.user;
       const user = { 
-        id: userData._id, // Use the _id from backend response
+        id: userData._id, 
         username: userData.username, 
         email: userData.email 
       };
@@ -105,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('expenseGuardUser', JSON.stringify(user));
       localStorage.setItem('expenseGuardToken', response.data.token);
       
-      // Dispatch user change event to clear previous user's expenses
+      
       window.dispatchEvent(new CustomEvent('userChange'));
       
       setIsLoading(false);
@@ -138,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('expenseGuardUser');
     localStorage.removeItem('expenseGuardToken');
     
-    // Dispatch logout event to immediately clear expenses
+    
     window.dispatchEvent(new CustomEvent('userLogout'));
   };
 

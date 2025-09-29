@@ -1,4 +1,3 @@
-import React from 'react';
 import { BarChart3, TrendingUp, PieChart } from 'lucide-react';
 
 interface AnalyticsProps {

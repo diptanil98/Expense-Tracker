@@ -1,4 +1,3 @@
-import React from 'react';
 import { Filter, RefreshCw } from 'lucide-react';
 import { useExpenses } from '../hooks/useExpenses';
 

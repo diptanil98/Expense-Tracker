@@ -1,4 +1,4 @@
-import React,  { createContext, useContext, useState, useEffect}  from 'react';
+import { createContext, useContext, useState, useEffect}  from 'react';
 import type { ReactNode } from 'react';
 import axios from 'axios';
 
@@ -50,7 +50,7 @@ const fetchExpenses = async () => {
     const user = JSON.parse(savedUser);
     const res = await axios.get<Expense[]>(`http://localhost:8765/expenses/expenses/user/${user.id}`);
     
-    // Double-check that all fetched expenses belong to the current user
+    
     const userExpenses = res.data.filter(expense => expense.user === user.id);
     
     // Additional security check - if any expenses don't match the current user, don't set them
@@ -91,7 +91,7 @@ const validateCurrentUserExpenses = () => {
   
   try {
     const user = JSON.parse(savedUser);
-    // If we have expenses but they don't belong to the current user, return false
+    
     if (expenses.length > 0 && expenses.some(expense => expense.user !== user.id)) {
       return false;
     }
@@ -104,7 +104,7 @@ const validateCurrentUserExpenses = () => {
 
   const addExpense = async (expenseData: Omit<Expense, 'id' | 'date'>) => {
    try {
-    // Get user ID from localStorage
+    
     const savedUser = localStorage.getItem('expenseGuardUser');
     if (!savedUser) {
       throw new Error('User not authenticated. Please log in again.');
@@ -119,7 +119,7 @@ const validateCurrentUserExpenses = () => {
     const res= await axios.post<Expense>('http://localhost:8765/expenses/expenses',expenseWithUser);
     const savedExpense=res.data;
     
-    // Security check - ensure the saved expense belongs to the current user
+    
     if (savedExpense.user !== user.id) {
       throw new Error('Security error: Expense was created for different user');
     }
@@ -144,12 +144,11 @@ const validateCurrentUserExpenses = () => {
   }
 }
 
-  // Automatically fetch expenses when the provider mounts and when user changes
+  
   useEffect(() => {
     const savedUser = localStorage.getItem('expenseGuardUser');
     if (savedUser) {
       try {
-        const user = JSON.parse(savedUser);
         fetchExpenses();
       } catch (error) {
         console.error('Error parsing user data:', error);
@@ -160,7 +159,7 @@ const validateCurrentUserExpenses = () => {
     }
   }, []);
 
-  // Listen for custom logout event to immediately clear expenses
+  
   useEffect(() => {
     const handleLogout = () => {
       clearExpenses();
@@ -168,12 +167,11 @@ const validateCurrentUserExpenses = () => {
 
     const handleUserChange = () => {
       clearExpenses();
-      // Small delay to ensure localStorage is updated, then fetch new user's expenses
+      
       setTimeout(() => {
         const savedUser = localStorage.getItem('expenseGuardUser');
         if (savedUser) {
           try {
-            const user = JSON.parse(savedUser);
             fetchExpenses();
           } catch (error) {
             console.error('Error parsing user data:', error);

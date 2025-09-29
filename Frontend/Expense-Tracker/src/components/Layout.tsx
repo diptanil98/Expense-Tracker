@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { DollarSign, CreditCard, AlertTriangle, BarChart3, RefreshCw } from 'lucide-react';
 import { Header } from './Header';

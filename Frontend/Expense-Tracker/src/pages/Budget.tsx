@@ -31,7 +31,7 @@ const Budgets = () => {
     period: 'monthly'
   });
 
-  const API_URL = "http://localhost:8765"; // change if deployed
+  const API_URL = "http://localhost:8765"; 
 
   const categories = [
     'Food & Dining',
@@ -45,7 +45,7 @@ const Budgets = () => {
     'Other',
   ];
 
-  // ✅ Fetch budgets from MongoDB
+  
   useEffect(() => {
     const fetchBudgets = async () => {
       try {
@@ -56,7 +56,6 @@ const Budgets = () => {
         }
         const user = JSON.parse(savedUser);
         const res = await axios.get(`${API_URL}/budget/Budgets`);
-        // Filter budgets for current user
         const userBudgets = res.data.filter((b: any) => b.user === user.id);
         setBudgets(userBudgets.map((b: any) => ({
           ...b,
@@ -72,14 +71,12 @@ const Budgets = () => {
     fetchBudgets();
   }, []);
 
-  // ✅ Calculate spent amount for a category
   const calculateSpentForCategory = (category: string) => {
     return expenses
       .filter(expense => expense.category === category)
       .reduce((sum, expense) => sum + expense.amount, 0);
   };
 
-  // ✅ Update budgets with expenses
   const updatedBudgets = useMemo(() => {
     return budgets.map(budget => {
       const spent = calculateSpentForCategory(budget.category);
@@ -98,7 +95,6 @@ const Budgets = () => {
     });
   }, [budgets, expenses]);
 
-  // ✅ Add budget (POST to backend)
   const handleAddBudget = async (e: React.FormEvent) => {
     e.preventDefault();
     const limit = parseFloat(newBudget.amount);
@@ -119,7 +115,7 @@ const Budgets = () => {
   });
 
   const res = await axios.post(`${API_URL}/budget/Budget`, {
-    user: userId, // dynamically pulled
+    user: userId, 
     category: newBudget.category,
     limit: limit
   });
@@ -145,7 +141,7 @@ const Budgets = () => {
     }
   };
 
-  // ✅ Delete budget
+  
   const handleRemoveBudget = async (budgetId?: string) => {
     if (!budgetId) return;
     try {
