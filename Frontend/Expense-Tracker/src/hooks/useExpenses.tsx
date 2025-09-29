@@ -48,7 +48,7 @@ const fetchExpenses = async () => {
     }
     
     const user = JSON.parse(savedUser);
-    const res = await axios.get<Expense[]>(`http://localhost:8765/expenses/expenses/user/${user.id}`);
+    const res = await axios.get<Expense[]>(`https://expense-tracker-backend-i6oy.onrender.com/expenses/expenses/user/${user.id}`);
     
     
     const userExpenses = res.data.filter(expense => expense.user === user.id);
@@ -116,7 +116,7 @@ const validateCurrentUserExpenses = () => {
       user: user.id
     };
     
-    const res= await axios.post<Expense>('http://localhost:8765/expenses/expenses',expenseWithUser);
+    const res= await axios.post<Expense>('https://expense-tracker-backend-i6oy.onrender.com/expenses/expenses',expenseWithUser);
     const savedExpense=res.data;
     
     
