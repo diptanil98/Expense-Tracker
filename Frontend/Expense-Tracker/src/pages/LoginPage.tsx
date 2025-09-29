@@ -46,7 +46,7 @@ export function LoginPage() {
             <div className="p-3 bg-emerald-500/20 rounded-xl">
               <Shield className="w-8 h-8 text-emerald-400" />
             </div>
-            <h1 className="text-3xl font-bold text-white">ExpenseGuard AI</h1>
+            <h1 className="text-3xl font-bold text-white">Expenzo</h1>
           </div>
           <p className="text-slate-400">Sign in to your account</p>
         </div>
