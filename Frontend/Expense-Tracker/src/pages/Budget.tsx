@@ -31,7 +31,7 @@ const Budgets = () => {
     period: 'monthly'
   });
 
-  const API_URL = "http://localhost:8765"; 
+  const API_URL = "https://expense-tracker-backend-i6oy.onrender.com"; 
 
   const categories = [
     'Food & Dining',

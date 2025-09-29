@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     
     try {
-      const response = await axios.post('http://localhost:8765/User/login', {
+      const response = await axios.post('https://expense-tracker-backend-i6oy.onrender.com/User/login', {
         email,
         password
       });
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       console.log({  username, email, password });
-      const response = await axios.post('http://localhost:8765/User/register', {
+      const response = await axios.post('https://expense-tracker-backend-i6oy.onrender.com/User/register', {
         username, 
         email,
         password
