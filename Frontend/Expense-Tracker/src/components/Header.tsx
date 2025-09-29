@@ -14,7 +14,7 @@ export function Header() {
         <div className="p-2 bg-emerald-500/20 rounded-lg">
           <Shield className="w-6 h-6 text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-bold text-white">ExpenseGuard AI</h1>
+        <h1 className="text-2xl font-bold text-white">Expenzo</h1>
       </div>
       
       <div className="flex items-center space-x-3">
