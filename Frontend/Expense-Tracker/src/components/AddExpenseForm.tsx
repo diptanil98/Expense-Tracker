@@ -213,7 +213,7 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
 
   try {
     // Step 1: Upload to Form Trigger (OCR workflow will save data to Google Sheets)
-    await fetch("/webhook/3e002fac-1264-4bcb-98bc-976c5fff5412", {
+    await fetch("http://localhost:5678/webhook/3e002fac-1264-4bcb-98bc-976c5fff5412", {
       method: "POST",
       body: formData,
     });
@@ -221,7 +221,7 @@ export function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
     // Step 2: Poll retrieval webhook until OCR data is ready
     let data = null;
     for (let i = 0; i < 5; i++) { // try up to 5 times
-      const res = await fetch(`/webhook/ocr-result?id=${formId}`);
+      const res = await fetch(`http://localhost:5678/webhook/ocr-result?id=${formId}`);
       if (res.ok) {
         data = await res.json();
         if (data.amount || data.merchant || data.category) break; // found useful data
