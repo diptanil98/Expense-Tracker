@@ -4,7 +4,7 @@ A full-stack expense tracking application built with modern web technologies to 
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-85.9%25-blue)
 ![JavaScript](https://img.shields.io/badge/JavaScript-13.1%25-yellow)
-![License](https://img.shields.io/badge/license-MIT-green)
+
 
 ## 📋 Table of Contents
 
