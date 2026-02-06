@@ -198,12 +198,6 @@ Before you begin, ensure you have the following installed:
 ![WhatsApp Image 2026-02-06 at 8 45 40 PM (1)](https://github.com/user-attachments/assets/ebe0b668-dda3-4b13-adae-641d4fb20d5a)
 
 
-
-
-
-
-*Coming soon...*
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
@@ -227,7 +221,7 @@ Contributions are welcome! Please follow these steps:
 **Diptanil Saha**
 
 - GitHub: [@diptanil98](https://github.com/diptanil98)
-- Project Link: [https://github.com/diptanil98/Expense-Tracker](https://github.com/diptanil98/Expense-Tracker)
+- Project Link:[Expenzo](https://expenzo-frontend-6tgx.onrender.com/)
 
 ---
 
