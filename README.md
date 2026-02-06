@@ -67,8 +67,7 @@ Expense Tracker is a comprehensive financial management tool that allows users t
 - **RESTful API** - API architecture
 
 ### Database
-- **MongoDB** / **PostgreSQL** - Data persistence (specific database used in your implementation)
-
+- **MongoDB** 
 ## 📁 Project Structure
 ```
 Expense-Tracker/
