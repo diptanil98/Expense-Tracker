@@ -17,10 +17,8 @@ A full-stack expense tracking application built with modern web technologies to 
   - [Installation](#installation)
   - [Running the Application](#running-the-application)
 - [Usage](#usage)
-- [API Documentation](#api-documentation)
 - [Screenshots](#screenshots)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ## 🎯 Overview
@@ -175,36 +173,19 @@ Before you begin, ensure you have the following installed:
    - Edit or delete existing categories
    - Assign colors to categories for visual distinction
 
-4. **Exporting Data**
-   - Export your transaction history as CSV or PDF
-   - Generate monthly or yearly reports
+4.  **Smart Receipt Upload**
+   - Click on "Upload Receipt" or drag and drop a receipt image
+   - The system automatically scans and extracts:
+     - Transaction amount
+     - Merchant/vendor name
+     - Transaction date
+     - Items purchased (if applicable)
+   - Review and edit the auto-filled information
+   - Assign a category if not auto-detected
+   - Click "Save" to add the transaction
+   - Original receipt image is stored for future reference
 
-## 📚 API Documentation
 
-### Base URL
-```
-http://localhost:5000/api
-```
-
-### Endpoints
-
-#### Transactions
-- `GET /transactions` - Get all transactions
-- `GET /transactions/:id` - Get a specific transaction
-- `POST /transactions` - Create a new transaction
-- `PUT /transactions/:id` - Update a transaction
-- `DELETE /transactions/:id` - Delete a transaction
-
-#### Categories
-- `GET /categories` - Get all categories
-- `POST /categories` - Create a new category
-- `PUT /categories/:id` - Update a category
-- `DELETE /categories/:id` - Delete a category
-
-#### Analytics
-- `GET /analytics/summary` - Get financial summary
-- `GET /analytics/monthly` - Get monthly statistics
-- `GET /analytics/category` - Get category-wise breakdown
 
 ## 📸 Screenshots
 
@@ -228,9 +209,6 @@ Contributions are welcome! Please follow these steps:
 - Test your changes thoroughly
 - Update the README if needed
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👤 Contact
 
